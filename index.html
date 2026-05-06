@@ -352,6 +352,159 @@
       .tier-card { padding: 22px 20px 20px; }
       .step-text { font-size: 15px; }
     }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(26,21,16,0.7);
+      backdrop-filter: blur(3px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: var(--card-bg);
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      padding: 36px 32px 28px;
+      max-width: 420px;
+      width: 100%;
+      position: relative;
+      animation: modalIn 0.2s ease;
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 14px; right: 16px;
+      background: none; border: none;
+      font-size: 22px; color: var(--warm-gray);
+      cursor: pointer; line-height: 1;
+      padding: 4px;
+    }
+
+    .modal-close:hover { color: var(--ink); }
+
+    .modal-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 8px;
+    }
+
+    .modal h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 6px;
+      line-height: 1.2;
+    }
+
+    .modal p {
+      font-size: 14px;
+      color: var(--warm-gray);
+      margin-bottom: 24px;
+      font-style: italic;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    .field label {
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--warm-gray);
+      margin-bottom: 7px;
+    }
+
+    .field input, .field select {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid var(--rule);
+      border-radius: 3px;
+      background: white;
+      font-family: 'Lora', serif;
+      font-size: 15px;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.15s;
+      appearance: none;
+    }
+
+    .field input:focus, .field select:focus {
+      border-color: var(--amber);
+    }
+
+    .modal-submit {
+      width: 100%;
+      background: var(--ink);
+      color: var(--paper);
+      border: none;
+      padding: 13px 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      letter-spacing: 0.05em;
+      border-radius: 3px;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: background 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .modal-submit:hover { background: #2d261f; }
+    .modal-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .modal-success {
+      text-align: center;
+      padding: 12px 0 4px;
+    }
+
+    .modal-success .check {
+      font-size: 36px;
+      margin-bottom: 12px;
+    }
+
+    .modal-success h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+
+    .modal-success p {
+      font-size: 14px;
+      color: var(--warm-gray);
+      margin-bottom: 0;
+      font-style: italic;
+    }
+
+    .error-msg {
+      font-size: 13px;
+      color: var(--red);
+      margin-top: 10px;
+      text-align: center;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -497,7 +650,54 @@
   Curiosity Detective · Early Access · May 2026 · Built with Ellie Strong, age 6
 </footer>
 
+<!-- REGISTRATION MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" role="dialog" aria-modal="true">
+    <button class="modal-close" onclick="closeModal()" aria-label="Close">×</button>
+
+    <div id="modalForm">
+      <div class="modal-eyebrow">One quick thing</div>
+      <h2>Before you play</h2>
+      <p>So we can follow up and improve the game — takes 10 seconds.</p>
+
+      <div class="field">
+        <label for="inputName">Your name</label>
+        <input type="text" id="inputName" placeholder="e.g. Sarah" autocomplete="name" />
+      </div>
+
+      <div class="field">
+        <label for="inputAge">Your child's age</label>
+        <select id="inputAge">
+          <option value="" disabled selected>Select age</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+          <option value="10">10</option>
+          <option value="11">11</option>
+          <option value="12">12</option>
+        </select>
+      </div>
+
+      <button class="modal-submit" id="submitBtn" onclick="handleSubmit()">
+        Copy Prompt &amp; Continue
+      </button>
+      <div class="error-msg" id="errorMsg">Something went wrong — please try again.</div>
+    </div>
+
+    <div id="modalSuccess" class="modal-success" style="display:none;">
+      <div class="check">✅</div>
+      <h3>Prompt copied!</h3>
+      <p>Paste it into Claude or ChatGPT, hit send, then tap the voice icon and say "hi".</p>
+    </div>
+  </div>
+</div>
+
 <script>
+// ── CONFIG ── paste your Google Apps Script URL here after deploying
+const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1hNMn6kV2LrV5HyOrUVtki9hPA1UbUGewbeSMndz6goo/edit?gid=0#gid=0';
+
 const PROMPTS = {
   v15: `🔍 CURIOSITY DETECTIVE — Soul File v1.5 — Theme Agnostic Edition
 Ages 6–8 · AI System Prompt · Updated May 2026
@@ -879,36 +1079,97 @@ A child who finishes a session knowing less than they thought they did — and i
 Soul File v2.0 · Senior Investigator Edition · Ages 10–12 · Curiosity Detective · May 2026`
 };
 
-function copyPrompt(version, btn) {
-  const text = PROMPTS[version];
-  if (!text) return;
+let pendingVersion = null;
+let pendingBtn = null;
 
-  navigator.clipboard.writeText(text).then(() => {
-    const original = btn.innerHTML;
-    btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Copied — paste into your AI`;
-    btn.classList.add('copied');
-    setTimeout(() => {
-      btn.innerHTML = original;
-      btn.classList.remove('copied');
-    }, 3000);
-  }).catch(() => {
-    // Fallback for older browsers
+function copyPrompt(version, btn) {
+  pendingVersion = version;
+  pendingBtn = btn;
+  // Reset modal state
+  document.getElementById('modalForm').style.display = 'block';
+  document.getElementById('modalSuccess').style.display = 'none';
+  document.getElementById('inputName').value = '';
+  document.getElementById('inputAge').value = '';
+  document.getElementById('errorMsg').style.display = 'none';
+  document.getElementById('submitBtn').disabled = false;
+  document.getElementById('submitBtn').textContent = 'Copy Prompt & Continue';
+  document.getElementById('modalOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('inputName').focus(), 100);
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  pendingVersion = null;
+  pendingBtn = null;
+}
+
+// Close on overlay click
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// Close on Escape
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+});
+
+async function handleSubmit() {
+  const name = document.getElementById('inputName').value.trim();
+  const age  = document.getElementById('inputAge').value;
+
+  if (!name || !age) {
+    document.getElementById('errorMsg').textContent = 'Please fill in both fields.';
+    document.getElementById('errorMsg').style.display = 'block';
+    return;
+  }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+
+  // Determine tier label
+  const tierLabels = { v15: 'Ages 6–8', v18: 'Ages 8–10', v20: 'Ages 10–12' };
+  const tier = tierLabels[pendingVersion] || pendingVersion;
+
+  // Send to Google Sheet (fire and forget — don't block on it)
+  if (SHEET_URL && SHEET_URL !== 'YOUR_APPS_SCRIPT_URL_HERE') {
+    try {
+      const params = new URLSearchParams({ name, age, tier, timestamp: new Date().toISOString() });
+      fetch(`${SHEET_URL}?${params}`, { method: 'GET', mode: 'no-cors' });
+    } catch (e) { /* silent fail */ }
+  }
+
+  // Copy prompt to clipboard
+  const text = PROMPTS[pendingVersion];
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
     const ta = document.createElement('textarea');
     ta.value = text;
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
+    ta.style.cssText = 'position:fixed;opacity:0';
     document.body.appendChild(ta);
     ta.select();
     document.execCommand('copy');
     document.body.removeChild(ta);
-    const original = btn.innerHTML;
-    btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Copied — paste into your AI`;
-    btn.classList.add('copied');
+  }
+
+  // Show success state
+  document.getElementById('modalForm').style.display = 'none';
+  document.getElementById('modalSuccess').style.display = 'block';
+
+  // Update the button on the page
+  if (pendingBtn) {
+    const original = pendingBtn.innerHTML;
+    pendingBtn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Copied — paste into your AI`;
+    pendingBtn.classList.add('copied');
     setTimeout(() => {
-      btn.innerHTML = original;
-      btn.classList.remove('copied');
-    }, 3000);
-  });
+      pendingBtn.innerHTML = original;
+      pendingBtn.classList.remove('copied');
+    }, 5000);
+  }
+
+  // Auto-close modal after 3s
+  setTimeout(() => closeModal(), 3000);
 }
 </script>
 </body>
