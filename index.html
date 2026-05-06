@@ -696,7 +696,7 @@
 
 <script>
 // ── CONFIG ── paste your Google Apps Script URL here after deploying
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbz63OvHvgVpW2kBDuz8z_1O2_h5DVAJGH6pBf4Nv10k88Wgk7aNBsjTBuMYT-cbrCU8/exec';
+const SHEET_URL = 'YOUR_APPS_SCRIPT_URL_HERE';
 
 const PROMPTS = {
   v15: `🔍 CURIOSITY DETECTIVE — Soul File v1.5 — Theme Agnostic Edition
@@ -1135,7 +1135,7 @@ async function handleSubmit() {
   if (SHEET_URL && SHEET_URL !== 'YOUR_APPS_SCRIPT_URL_HERE') {
     try {
       const params = new URLSearchParams({ name, age, tier, timestamp: new Date().toISOString() });
-      fetch(`${SHEET_URL}?${params}`, { method: 'GET', mode: 'no-cors' });
+      new Image().src = `${SHEET_URL}?${params}`;
     } catch (e) { /* silent fail */ }
   }
 
