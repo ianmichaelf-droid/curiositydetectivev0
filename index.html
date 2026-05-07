@@ -505,6 +505,39 @@
       text-align: center;
       display: none;
     }
+
+    /* ── NDA CHECKBOX ── */
+    .nda-field {
+      margin-top: 4px;
+      margin-bottom: 4px;
+    }
+
+    .nda-label {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--warm-gray);
+      line-height: 1.5;
+    }
+
+    .nda-label input[type="checkbox"] {
+      flex-shrink: 0;
+      width: 16px;
+      height: 16px;
+      margin-top: 2px;
+      accent-color: var(--ink);
+      cursor: pointer;
+    }
+
+    .nda-label a {
+      color: var(--amber);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .nda-label a:hover { color: var(--ink); }
   </style>
 </head>
 <body>
@@ -678,6 +711,13 @@
           <option value="11">11</option>
           <option value="12">12</option>
         </select>
+      </div>
+
+      <div class="field nda-field">
+        <label class="nda-label">
+          <input type="checkbox" id="ndaCheck" />
+          <span>I have read and accept the <a href="/nda.html" target="_blank" rel="noopener">terms &amp; conditions</a>. I understand this is a confidential early access program and I will not share it with others.</span>
+        </label>
       </div>
 
       <button class="modal-submit" id="submitBtn" onclick="handleSubmit()">
@@ -1090,6 +1130,7 @@ function copyPrompt(version, btn) {
   document.getElementById('modalSuccess').style.display = 'none';
   document.getElementById('inputName').value = '';
   document.getElementById('inputAge').value = '';
+  document.getElementById('ndaCheck').checked = false;
   document.getElementById('errorMsg').style.display = 'none';
   document.getElementById('submitBtn').disabled = false;
   document.getElementById('submitBtn').textContent = 'Copy Prompt & Continue';
@@ -1116,9 +1157,12 @@ document.addEventListener('keydown', function(e) {
 async function handleSubmit() {
   const name = document.getElementById('inputName').value.trim();
   const age  = document.getElementById('inputAge').value;
+  const nda  = document.getElementById('ndaCheck').checked;
 
-  if (!name || !age) {
-    document.getElementById('errorMsg').textContent = 'Please fill in both fields.';
+  if (!name || !age || !nda) {
+    document.getElementById('errorMsg').textContent = !nda
+      ? 'Please accept the terms & conditions to continue.'
+      : 'Please fill in both fields.';
     document.getElementById('errorMsg').style.display = 'block';
     return;
   }
@@ -1134,7 +1178,7 @@ async function handleSubmit() {
   // Send to Google Sheet (fire and forget — don't block on it)
   if (SHEET_URL && SHEET_URL !== 'YOUR_APPS_SCRIPT_URL_HERE') {
     try {
-      const params = new URLSearchParams({ name, age, tier, timestamp: new Date().toISOString() });
+      const params = new URLSearchParams({ name, age, tier, nda_accepted: 'Yes', timestamp: new Date().toISOString() });
       new Image().src = `${SHEET_URL}?${params}`;
     } catch (e) { /* silent fail */ }
   }
