@@ -424,7 +424,7 @@
       margin-bottom: 18px;
     }
 
-    .field label {
+    .field > label {
       display: block;
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
@@ -434,7 +434,7 @@
       margin-bottom: 7px;
     }
 
-    .field input, .field select {
+    .field input:not([type="checkbox"]), .field select {
       width: 100%;
       padding: 11px 14px;
       border: 1px solid var(--rule);
@@ -448,7 +448,7 @@
       appearance: none;
     }
 
-    .field input:focus, .field select:focus {
+    .field input:not([type="checkbox"]):focus, .field select:focus {
       border-color: var(--amber);
     }
 
